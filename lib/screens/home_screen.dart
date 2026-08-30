@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/game.dart';
 import '../services/rawg_service.dart';
 import 'catalog_screen.dart';
+import 'game_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,24 +30,15 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(
-              Icons.sports_esports,
-              size: 28,
-            ),
+            Icon(Icons.sports_esports, size: 28),
             SizedBox(width: 10),
-            Text(
-              'GameVault',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text('GameVault', style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         actions: [
           IconButton(
             tooltip: 'Mi Vault',
-            onPressed: () {
-            },
+            onPressed: () {},
             icon: const Icon(Icons.bookmark_outline),
           ),
         ],
@@ -58,9 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, snapshot) {
             // Mientras RAWG responde.
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
 
             // Si ocurre un error.
@@ -79,20 +69,12 @@ class _HomeScreenState extends State<HomeScreen> {
             return RefreshIndicator(
               onRefresh: _refreshGames,
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(
-                  20,
-                  10,
-                  20,
-                  30,
-                ),
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
                 children: [
                   // Presentación
                   const Text(
                     'Descubre tu próximo juego',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 8),
@@ -119,17 +101,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-TextButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const CatalogScreen(),
-      ),
-    );
-  },
-  child: const Text('Ver todos'),
-),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CatalogScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text('Ver todos'),
+                      ),
                     ],
                   ),
 
@@ -153,18 +135,13 @@ TextButton(
 
                   const Text(
                     'Populares',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 14),
 
                   // Lista de videojuegos
-                  ...games.skip(5).map(
-                        (game) => _buildGameListTile(game),
-                      ),
+                  ...games.skip(5).map((game) => _buildGameListTile(game)),
                 ],
               ),
             );
@@ -182,6 +159,12 @@ TextButton(
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GameDetailScreen(game: game),
+              ),
+            );
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,11 +176,7 @@ TextButton(
                       ? Image.network(
                           game.image!,
                           fit: BoxFit.cover,
-                          errorBuilder: (
-                            context,
-                            error,
-                            stackTrace,
-                          ) {
+                          errorBuilder: (context, error, stackTrace) {
                             return _imagePlaceholder();
                           },
                         )
@@ -224,16 +203,11 @@ TextButton(
 
                     Row(
                       children: [
-                        const Icon(
-                          Icons.star,
-                          size: 17,
-                        ),
+                        const Icon(Icons.star, size: 17),
                         const SizedBox(width: 5),
                         Text(
                           game.rating.toStringAsFixed(1),
-                          style: TextStyle(
-                            color: Colors.grey.shade300,
-                          ),
+                          style: TextStyle(color: Colors.grey.shade300),
                         ),
                       ],
                     ),
@@ -263,11 +237,7 @@ TextButton(
                 ? Image.network(
                     game.image!,
                     fit: BoxFit.cover,
-                    errorBuilder: (
-                      context,
-                      error,
-                      stackTrace,
-                    ) {
+                    errorBuilder: (context, error, stackTrace) {
                       return _imagePlaceholder();
                     },
                   )
@@ -279,43 +249,38 @@ TextButton(
           game.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
 
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 6),
           child: Row(
             children: [
-              const Icon(
-                Icons.star,
-                size: 16,
-              ),
+              const Icon(Icons.star, size: 16),
               const SizedBox(width: 4),
               Text(game.rating.toStringAsFixed(1)),
             ],
           ),
         ),
 
-        trailing: const Icon(
-          Icons.chevron_right,
-        ),
+        trailing: const Icon(Icons.chevron_right),
 
         onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GameDetailScreen(game: game),
+            ),
+          );
         },
       ),
     );
   }
 
-
   Widget _imagePlaceholder() {
     return Container(
       alignment: Alignment.center,
-      child: const Icon(
-        Icons.sports_esports,
-        size: 42,
-      ),
+      child: const Icon(Icons.sports_esports, size: 42),
     );
   }
 
@@ -336,20 +301,14 @@ TextButton(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.cloud_off,
-              size: 60,
-            ),
+            const Icon(Icons.cloud_off, size: 60),
 
             const SizedBox(height: 16),
 
             const Text(
               'No pudimos cargar los videojuegos',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 8),
@@ -357,9 +316,7 @@ TextButton(
             Text(
               'Comprueba tu conexión e inténtalo nuevamente.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey.shade400,
-              ),
+              style: TextStyle(color: Colors.grey.shade400),
             ),
 
             const SizedBox(height: 20),

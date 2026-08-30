@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import '../models/game.dart';
 import '../services/rawg_service.dart';
+import 'game_detail_screen.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -27,18 +27,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
       appBar: AppBar(
         title: const Text(
           'Explorar juegos',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: FutureBuilder<List<Game>>(
         future: _gamesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -48,9 +44,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
           final games = snapshot.data ?? [];
 
           if (games.isEmpty) {
-            return const Center(
-              child: Text('No se encontraron videojuegos.'),
-            );
+            return const Center(child: Text('No se encontraron videojuegos.'));
           }
 
           return RefreshIndicator(
@@ -58,8 +52,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
             child: GridView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: games.length,
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 14,
                 mainAxisSpacing: 14,
@@ -80,7 +73,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GameDetailScreen(game: game),
+            ),
+          );
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,11 +90,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     ? Image.network(
                         game.image!,
                         fit: BoxFit.cover,
-                        errorBuilder: (
-                          context,
-                          error,
-                          stackTrace,
-                        ) {
+                        errorBuilder: (context, error, stackTrace) {
                           return _imagePlaceholder();
                         },
                       )
@@ -120,14 +114,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.star,
-                        size: 17,
-                      ),
+                      const Icon(Icons.star, size: 17),
                       const SizedBox(width: 5),
-                      Text(
-                        game.rating.toStringAsFixed(1),
-                      ),
+                      Text(game.rating.toStringAsFixed(1)),
                     ],
                   ),
                 ],
@@ -142,10 +131,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
   Widget _imagePlaceholder() {
     return Container(
       alignment: Alignment.center,
-      child: const Icon(
-        Icons.sports_esports,
-        size: 48,
-      ),
+      child: const Icon(Icons.sports_esports, size: 48),
     );
   }
 
@@ -164,18 +150,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.cloud_off,
-              size: 60,
-            ),
+            const Icon(Icons.cloud_off, size: 60),
             const SizedBox(height: 16),
             const Text(
               'No pudimos cargar el catálogo',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(
