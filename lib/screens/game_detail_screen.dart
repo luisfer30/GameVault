@@ -20,6 +20,44 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
     _isFavorite = VaultService.isFavorite(widget.game.id);
   }
 
+  Widget _infoRow(IconData icon, String title, String value) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1C1F26),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 22),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final game = widget.game;
@@ -65,7 +103,6 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
                   ),
 
                   const SizedBox(height: 16),
-
                   // Rating
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -87,6 +124,41 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
                         ),
                       ],
                     ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  const Text(
+                    'Información',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  _infoRow(
+                    Icons.calendar_month_outlined,
+                    'Fecha de lanzamiento',
+                    game.released ?? 'No disponible',
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  _infoRow(
+                    Icons.category_outlined,
+                    'Géneros',
+                    game.genres.isNotEmpty
+                        ? game.genres.join(' · ')
+                        : 'No disponible',
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  _infoRow(
+                    Icons.devices_outlined,
+                    'Plataformas',
+                    game.platforms.isNotEmpty
+                        ? game.platforms.join(' · ')
+                        : 'No disponible',
                   ),
 
                   const SizedBox(height: 28),
