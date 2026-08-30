@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'services/rawg_service.dart';
-
+import 'screens/home_screen.dart';
 
 void main() {
   runApp(const GameVaultApp());
@@ -12,69 +11,47 @@ class GameVaultApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'GameVault',
       debugShowCheckedModeBanner: false,
-      home: const TestApiScreen(),
-    );
-  }
-}
+      theme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
 
-class TestApiScreen extends StatefulWidget {
-  const TestApiScreen({super.key});
+        scaffoldBackgroundColor: const Color(0xFF111318),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6C5CE7),
+          brightness: Brightness.dark,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF111318),
+          foregroundColor: Colors.white,
+          centerTitle: false,
+          elevation: 0,
+        ),
+        cardTheme: CardThemeData(
+          color: const Color(0xFF1C1F26),
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
 
-  @override
-  State<TestApiScreen> createState() => _TestApiScreenState();
-}
-
-class _TestApiScreenState extends State<TestApiScreen> {
-  final RawgService service = RawgService();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('GameVault'),
+        // Configuración de botones
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24,
+              vertical: 14,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
       ),
-      body: FutureBuilder(
-        future: service.getGames(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Error: ${snapshot.error}',
-              ),
-            );
-          }
-
-          final games = snapshot.data ?? [];
-
-          return ListView.builder(
-            itemCount: games.length,
-            itemBuilder: (context, index) {
-              final game = games[index];
-
-              return ListTile(
-                leading: game.image != null
-                    ? Image.network(
-                        game.image!,
-                        width: 70,
-                        fit: BoxFit.cover,
-                      )
-                    : const Icon(Icons.videogame_asset),
-                title: Text(game.name),
-                subtitle:
-                    Text('Rating: ${game.rating}'),
-              );
-            },
-          );
-        },
-      ),
+      // Primera pantalla
+      home: const HomeScreen(),
     );
   }
 }
