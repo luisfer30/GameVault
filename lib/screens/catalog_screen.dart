@@ -12,8 +12,16 @@ class CatalogScreen extends StatefulWidget {
 
 class _CatalogScreenState extends State<CatalogScreen> {
   final RawgService _rawgService = RawgService();
+  final TextEditingController _searchController = TextEditingController();
 
+  String _searchText = '';
   late Future<List<Game>> _gamesFuture;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -43,25 +51,71 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
           final games = snapshot.data ?? [];
 
+          final filteredGames = games.where((game) {
+            return game.name.toLowerCase().contains(_searchText.toLowerCase());
+          }).toList();
+
           if (games.isEmpty) {
             return const Center(child: Text('No se encontraron videojuegos.'));
           }
 
-          return RefreshIndicator(
-            onRefresh: _refreshGames,
-            child: GridView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: games.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 14,
-                mainAxisSpacing: 14,
-                childAspectRatio: 0.72,
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchText = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Buscar videojuegos...',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchText.isNotEmpty
+                        ? IconButton(
+                            onPressed: () {
+                              _searchController.clear();
+
+                              setState(() {
+                                _searchText = '';
+                              });
+                            },
+                            icon: const Icon(Icons.close),
+                          )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                ),
               ),
-              itemBuilder: (context, index) {
-                return _buildGameCard(games[index]);
-              },
-            ),
+
+              Expanded(
+                child: filteredGames.isEmpty
+                    ? const Center(
+                        child: Text('No se encontraron videojuegos.'),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: _refreshGames,
+                        child: GridView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: filteredGames.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 14,
+                                mainAxisSpacing: 14,
+                                childAspectRatio: 0.72,
+                              ),
+                          itemBuilder: (context, index) {
+                            return _buildGameCard(filteredGames[index]);
+                          },
+                        ),
+                      ),
+              ),
+            ],
           );
         },
       ),
