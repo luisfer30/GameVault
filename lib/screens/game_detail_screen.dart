@@ -5,16 +5,14 @@ import '../models/game.dart';
 class GameDetailScreen extends StatefulWidget {
   final Game game;
 
-  const GameDetailScreen({
-    super.key,
-    required this.game,
-  });
+  const GameDetailScreen({super.key, required this.game});
 
   @override
   State<GameDetailScreen> createState() => _GameDetailScreenState();
 }
 
 class _GameDetailScreenState extends State<GameDetailScreen> {
+  bool _isFavorite = false;
   @override
   Widget build(BuildContext context) {
     final game = widget.game;
@@ -23,9 +21,7 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
       appBar: AppBar(
         title: const Text(
           'Detalle del juego',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
@@ -40,11 +36,7 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
                   ? Image.network(
                       game.image!,
                       fit: BoxFit.cover,
-                      errorBuilder: (
-                        context,
-                        error,
-                        stackTrace,
-                      ) {
+                      errorBuilder: (context, error, stackTrace) {
                         return _imagePlaceholder();
                       },
                     )
@@ -74,24 +66,17 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primaryContainer,
+                      color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
-                          Icons.star,
-                          size: 20,
-                        ),
+                        const Icon(Icons.star, size: 20),
                         const SizedBox(width: 6),
                         Text(
                           '${game.rating.toStringAsFixed(1)} / 5',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -101,10 +86,7 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
 
                   const Text(
                     'Acerca de este juego',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 10),
@@ -124,14 +106,28 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        // En el siguiente paso implementaremos
-                        // favoritos utilizando setState().
+                        setState(() {
+                          _isFavorite = !_isFavorite;
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              _isFavorite
+                                  ? '${widget.game.name} fue agregado a Mi Vault'
+                                  : '${widget.game.name} fue eliminado de Mi Vault',
+                            ),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
                       },
-                      icon: const Icon(
-                        Icons.favorite_border,
+                      icon: Icon(
+                        _isFavorite ? Icons.favorite : Icons.favorite_border,
                       ),
-                      label: const Text(
-                        'Agregar a Mi Vault',
+                      label: Text(
+                        _isFavorite
+                            ? 'Guardado en Mi Vault'
+                            : 'Agregar a Mi Vault',
                       ),
                     ),
                   ),
@@ -147,10 +143,7 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
   Widget _imagePlaceholder() {
     return Container(
       alignment: Alignment.center,
-      child: const Icon(
-        Icons.sports_esports,
-        size: 70,
-      ),
+      child: const Icon(Icons.sports_esports, size: 70),
     );
   }
 }
