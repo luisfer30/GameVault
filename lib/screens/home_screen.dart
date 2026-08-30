@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import '../models/game.dart';
 import '../services/rawg_service.dart';
+import 'catalog_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -119,12 +119,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          // En el siguiente paso irá al catálogo.
-                        },
-                        child: const Text('Ver todos'),
-                      ),
+TextButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CatalogScreen(),
+      ),
+    );
+  },
+  child: const Text('Ver todos'),
+),
                     ],
                   ),
 
