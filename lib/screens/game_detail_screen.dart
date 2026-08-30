@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import '../models/game.dart';
+import '../services/vault_service.dart';
 
 class GameDetailScreen extends StatefulWidget {
   final Game game;
@@ -12,7 +12,14 @@ class GameDetailScreen extends StatefulWidget {
 }
 
 class _GameDetailScreenState extends State<GameDetailScreen> {
-  bool _isFavorite = false;
+  late bool _isFavorite;
+  @override
+  void initState() {
+    super.initState();
+
+    _isFavorite = VaultService.isFavorite(widget.game.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     final game = widget.game;
@@ -108,6 +115,12 @@ class _GameDetailScreenState extends State<GameDetailScreen> {
                       onPressed: () {
                         setState(() {
                           _isFavorite = !_isFavorite;
+
+                          if (_isFavorite) {
+                            VaultService.addGame(widget.game);
+                          } else {
+                            VaultService.removeGame(widget.game.id);
+                          }
                         });
 
                         ScaffoldMessenger.of(context).showSnackBar(

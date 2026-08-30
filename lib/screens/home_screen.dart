@@ -3,6 +3,7 @@ import '../models/game.dart';
 import '../services/rawg_service.dart';
 import 'catalog_screen.dart';
 import 'game_detail_screen.dart';
+import 'vault_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,7 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             tooltip: 'Mi Vault',
-            onPressed: () {},
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const VaultScreen()),
+              );
+
+              setState(() {});
+            },
             icon: const Icon(Icons.bookmark_outline),
           ),
         ],
