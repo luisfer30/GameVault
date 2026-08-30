@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/game.dart';
 import '../services/vault_service.dart';
 import 'game_detail_screen.dart';
@@ -12,22 +11,67 @@ class VaultScreen extends StatefulWidget {
 }
 
 class _VaultScreenState extends State<VaultScreen> {
+  Future<void> _showClearVaultDialog() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Vaciar Mi Vault'),
+          content: const Text(
+            '¿Estás seguro de que deseas eliminar todos los juegos guardados?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: const Text('Eliminar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      setState(() {
+        VaultService.clearFavorites();
+      });
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Se eliminaron todos los juegos de Mi Vault',
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final games = VaultService.favorites;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Mi Vault',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: const Text('Mi Vault'),
+        actions: [
+          if (VaultService.favorites.isNotEmpty)
+            IconButton(
+              tooltip: 'Vaciar Mi Vault',
+              icon: const Icon(Icons.delete_sweep_outlined),
+              onPressed: _showClearVaultDialog,
+            ),
+        ],
       ),
-      body: games.isEmpty
-          ? _buildEmptyVault()
-          : _buildGameList(games),
+      body: games.isEmpty ? _buildEmptyVault() : _buildGameList(games),
     );
   }
 
@@ -38,18 +82,12 @@ class _VaultScreenState extends State<VaultScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.bookmark_border,
-              size: 80,
-            ),
+            const Icon(Icons.bookmark_border, size: 80),
             const SizedBox(height: 20),
             const Text(
               'Tu Vault está vacío',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Text(
@@ -79,8 +117,7 @@ class _VaultScreenState extends State<VaultScreen> {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: games.length,
-      separatorBuilder: (context, index) =>
-          const SizedBox(height: 10),
+      separatorBuilder: (context, index) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final game = games[index];
 
@@ -94,14 +131,8 @@ class _VaultScreenState extends State<VaultScreen> {
                 width: 70,
                 height: 70,
                 child: game.image != null
-                    ? Image.network(
-                        game.image!,
-                        fit: BoxFit.cover,
-                      )
-                    : const Icon(
-                        Icons.sports_esports,
-                        size: 40,
-                      ),
+                    ? Image.network(game.image!, fit: BoxFit.cover)
+                    : const Icon(Icons.sports_esports, size: 40),
               ),
             ),
 
@@ -109,29 +140,20 @@ class _VaultScreenState extends State<VaultScreen> {
               game.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
 
             subtitle: Row(
               children: [
-                const Icon(
-                  Icons.star,
-                  size: 16,
-                ),
+                const Icon(Icons.star, size: 16),
                 const SizedBox(width: 4),
-                Text(
-                  game.rating.toStringAsFixed(1),
-                ),
+                Text(game.rating.toStringAsFixed(1)),
               ],
             ),
 
             trailing: IconButton(
               tooltip: 'Eliminar de Mi Vault',
-              icon: const Icon(
-                Icons.delete_outline,
-              ),
+              icon: const Icon(Icons.delete_outline),
               onPressed: () {
                 _removeGame(game);
               },
@@ -141,8 +163,7 @@ class _VaultScreenState extends State<VaultScreen> {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      GameDetailScreen(game: game),
+                  builder: (context) => GameDetailScreen(game: game),
                 ),
               );
 
@@ -162,11 +183,7 @@ class _VaultScreenState extends State<VaultScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${game.name} fue eliminado de Mi Vault',
-        ),
-      ),
+      SnackBar(content: Text('${game.name} fue eliminado de Mi Vault')),
     );
   }
 }

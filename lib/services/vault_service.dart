@@ -23,4 +23,8 @@ class VaultService {
   static void removeGame(int gameId) {
     _favoriteGames.removeWhere((game) => game.id == gameId);
   }
+
+  static void clearFavorites() {
+    _favoriteGames.clear();
+  }
 }
